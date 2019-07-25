@@ -1,0 +1,15 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "linuxmetrics.fullname" . }}
+  labels:
+    app: {{ template "linuxmetrics.name" . }}
+    chart: {{ template "linuxmetrics.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "linuxmetrics.name" . }}
+      release: {{ .Release.Name }}
+{{ toYaml .Values.podDisruptionBudget | indent 2 }}

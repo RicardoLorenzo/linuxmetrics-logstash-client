@@ -1,0 +1,60 @@
+replicaCount: 1
+
+podDisruptionBudget:
+  maxUnavailable: 1
+
+updateStrategy:
+  type: RollingUpdate
+
+terminationGracePeriodSeconds: 30
+
+fullnameOverride:
+  linuxmetrics-node
+
+samples:
+  interval: 5
+
+logstash:
+  host: logstash-node.monitoring.svc.cluster.local
+  port: 1514
+
+image:
+  repository: ricardolorenzo/monitoring
+  tag: 0.1
+  pullPolicy: IfNotPresent
+  ## Add secrets manually via kubectl on kubernetes cluster and reference here
+  #pullSecrets:
+  #   - name: "secrets"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+  # podAntiAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     - topologyKey: "kubernetes.io/hostname"
+  #       labelSelector:
+  #         matchLabels:
+  #           release: logstash
+
+podAnnotations: {}
+  # iam.amazonaws.com/role: "linuxmetrics-role"
+  # prometheus.io/scrape: "true"
+  # prometheus.io/path: "/metrics"
+  # prometheus.io/port: "9198"
+
+podLabels: {}
+  # team: "developers"

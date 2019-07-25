@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: linuxmetrics-node
+  labels:
+    k8s-app: linuxmetrics
+    version: v1
+    kubernetes.io/cluster-service: "true"
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: linuxmetrics
+        version: v1
+        kubernetes.io/cluster-service: "true"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.pullSecrets | indent 8 }}
+      {{- end }}
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: osmetrics
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        #resources:
+        #  limits:
+        #    memory: 400Mi
+        #  requests:
+        #    cpu: 100m
+        #    memory: 400Mi
+        volumeMounts:
+        - name: hostproc
+          mountPath: /host/proc
+          readOnly: true
+        command: [ "/usr/bin/linuxmetrics-logstash" ]
+        args: [ "-host", "{{ .Values.logstash.host }}", "-port", "{{ .Values.logstash.port }}", "-proc-path", "/host/proc", "-interval", "{{ .Values.samples.interval }}" ]
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: hostproc
+        hostPath:
+          path: /proc
+    {{- with .Values.volumes }}
+{{ toYaml . | indent 8 }}
+    {{- end }}
