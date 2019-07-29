@@ -12,6 +12,5 @@ WORKDIR /src/linuxmetrics
 RUN /usr/bin/apt-get update
 RUN /usr/bin/apt-get install -y git golang make
 
-RUN /usr/bin/go get -d ./...
 RUN /usr/bin/make
 RUN mv linuxmetrics-logstash /usr/bin

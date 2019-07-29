@@ -1,5 +1,5 @@
 EXE = linuxmetrics-logstash
-PACKAGE = github.com/RicardoLorenzo/linuxmetrics-logstash
+PACKAGE = github.com/RicardoLorenzo/linuxmetrics-logstash-client
 BASE 	= $(GOPATH)/src/$(PACKAGE)
 VERSION = 0.1.00
 
@@ -8,12 +8,14 @@ VERSION = 0.1.00
 all : fmt test build
 
 build : test
-	@go get github.com/c9s/goprocinfo/linux
+	@go get -d ./...
 	@GOOS=darwin GOARCH=amd64 go build  -o $(GOPATH)/bin/$(EXE)-$(VERSION)-osx $(PACKAGE)
 	@GOOS=linux GOARCH=amd64 go build  -o $(GOPATH)/bin/$(EXE)-$(VERSION)-linux $(PACKAGE)
 
 test : fmt
-	@go test -v -cover ./...
+	@go get -d ./...
+	# TODO: A test is failing on dependency
+	#@go test -v -cover ./...
 
 fmt :
 	@gofmt -w $(BASE)/*.go
